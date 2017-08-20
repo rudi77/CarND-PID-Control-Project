@@ -1,5 +1,7 @@
 #ifndef PID_H
 #define PID_H
+#include <sstream>
+#include "Twiddle.h"
 
 class PID {
 public:
@@ -20,7 +22,7 @@ public:
   /*
   * Constructor
   */
-  PID();
+  PID(double Kp, double Ki, double Kd, int steps);
 
   /*
   * Destructor.
@@ -30,7 +32,7 @@ public:
   /*
   * Initialize PID.
   */
-  void Init(double Kp, double Ki, double Kd);
+  //void Init(double Kp, double Ki, double Kd);
 
   /*
   * Update the PID error variables given cross track error.
@@ -40,7 +42,26 @@ public:
   /*
   * Calculate the total PID error.
   */
-  double TotalError();
+  double TotalError() const;
+
+  std::string ToString() const
+  {
+    std::stringstream ss;
+
+    ss << "KP : " << Kp << " KI : " << Ki << " KD : " << Kd;
+
+    return ss.str();
+  }
+private:
+  Twiddle twiddle_;
+
+  int updateCounter;
+
+  double bestError;
+
+  bool isFirstUpdate;
+
+  int steps;
 };
 
 #endif /* PID_H */
