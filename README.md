@@ -1,5 +1,16 @@
 # CarND-Controls-PID
-Self-Driving Car Engineer Nanodegree Program
+The goal of this project is to implement a PID controller. The controller shall be able to keep the vehicle in the udacity's simulator on track at least for one round. The simulator provides the cross track error (CTE) which is the distance from the center of the track, speed and angle of the car. The CTE is fed into the PID controller. The output is the steering value which is sent back to the simulator at every time step t.
+The second task of this project is the tuning of the PID parameters KP, KI and KD.
+I started to tune the hyperparameters manually as it was described in the lessons. Finally, I tried to use the Twiddle algorithm for fine tuning.
+
+## Observations
+* Proportional part:
+* Integral part:
+* Differential part:
+
+## Video
+I recorded a [video](https://github.com/rudi77/CarND-PID-Control-Project/blob/master/videos/final_settings.mp4) with my final settings.
+
 
 ---
 
