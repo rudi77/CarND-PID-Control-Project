@@ -57,7 +57,6 @@ void Twiddle::Optimize(double error)
 
     p_index = UpdateIndex();
 
-    // TODO: check tolerance
     if (accumulate(dp.begin(), dp.end(), 0.0) < tolerance)
     {
       currentState = Finished;

@@ -30,6 +30,7 @@ std::string hasData(std::string s) {
   return "";
 }
 
+
 double bestError = 0.0;
 const int steps = 100;
 int updateCounter = 0;
@@ -38,7 +39,7 @@ void optimizeParameters(Twiddle& twiddle, double cte)
 {
   bestError += cte * cte;
 
-  if (updateCounter > 1500 && updateCounter % steps == 0)
+  if (updateCounter > 800 && updateCounter % steps == 0)
   {
     std::cout << "Twiddle optimizing parameters" << std::endl;
 
@@ -52,21 +53,22 @@ void optimizeParameters(Twiddle& twiddle, double cte)
   ++updateCounter;
 }
 
-
 int main()
 {
   uWS::Hub h;
 
   auto tolerance = 0.001;
-  auto Kp = 0.450459, Kd = 2.08389, Ki = 0.00019;
 
-  Twiddle twiddle(tolerance, { Kp, Kd, Ki}, { 0.1, 0.1, 0.0001 });
+  // Final PID values
+  auto Kp = 0.26, Kd = 2.2, Ki = 0.00002;
+  auto counter = 0;
+  auto isOptimize = false;  
+
+  Twiddle twiddle(tolerance, { Kp, Kd, Ki}, { 0.01, 0.5, 0.00001 });
 
   PID pid(Kp, Ki, Kd);
-  
-  auto counter = 0;
-
-  h.onMessage([&pid, &twiddle, &counter](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+ 
+  h.onMessage([&pid, &twiddle, &counter, &isOptimize](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -89,15 +91,17 @@ int main()
           * another PID controller to control the speed!
           */
 
-          //optimizeParameters(twiddle, cte);
-          //auto params = twiddle.Params();
-          //pid.Kp = params[0];
-          //pid.Kd = params[1];
-          //pid.Ki = params[2];
-
+          if (isOptimize)
+          {
+            optimizeParameters(twiddle, cte);
+            auto params = twiddle.Params();
+            pid.Kp = params[0];
+            pid.Kd = params[1];
+            pid.Ki = params[2];
+          }
 
           pid.UpdateError(cte);
-          steer_value = pid.TotalError();
+          steer_value = -pid.TotalError();
 
           // Check steering value
           if (steer_value > 1.0) 
@@ -109,37 +113,24 @@ int main()
             steer_value = -1.0;
           }
 
+
           // DEBUG
           if (counter > 0 && counter % 10 == 0)
           {
-            std::cout << "CTE: " << cte << " Angle: " << angle << " Steering Value: " << steer_value << " Speed: " << speed << std::endl;
+            std::cout << "CTE: " << cte << " Angle: " << angle << " Steering Value: " << steer_value << std::endl;
           }
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
-          msgJson["throttle"] = 0.3;
+          msgJson["throttle"] = 0.35; //current_throttle;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-          //std::cout << msg << std::endl;
+
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
 
           //if (counter > 0 && counter % steps == 0)
           //{
           //  std::cout << "RESETTING SIMULATOR" << std::endl;
           //  std::string msg("42[\"reset\",{}]");
-          //  ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
-
-          //  pid.Ki += pid.Ki;
-
-
-          //  std::cout << pid.ToString() << std::endl;
-          //}
-          //else
-          //{
-          //  json msgJson;
-          //  msgJson["steering_angle"] = steer_value;
-          //  msgJson["throttle"] = 0.3;
-          //  auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-          //  //std::cout << msg << std::endl;
           //  ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
           //}
 

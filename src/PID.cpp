@@ -19,12 +19,13 @@ void PID::UpdateError(double cte)
     isFirstUpdate = false;
   }
 
-  d_error = cte - p_error; 
+  d_error = cte - p_error;
   i_error += cte;
   p_error = cte;
 }
 
 double PID::TotalError() const
 {
-  return -Kp * p_error - Kd * d_error - Ki * i_error;
+  //return -Kp * p_error - Kd * d_error - Ki * i_error;
+  return Kp * p_error + Kd * d_error + Ki * i_error;
 }
