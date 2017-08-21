@@ -30,20 +30,43 @@ std::string hasData(std::string s) {
   return "";
 }
 
+double bestError = 0.0;
+const int steps = 100;
+int updateCounter = 0;
+
+void optimizeParameters(Twiddle& twiddle, double cte)
+{
+  bestError += cte * cte;
+
+  if (updateCounter > 1500 && updateCounter % steps == 0)
+  {
+    std::cout << "Twiddle optimizing parameters" << std::endl;
+
+    auto error = bestError / static_cast<double>(steps);
+
+    bestError = 0.0;
+
+    twiddle.Optimize(error);
+  }
+
+  ++updateCounter;
+}
+
+
 int main()
 {
   uWS::Hub h;
 
-  const auto steps = 10;
+  auto tolerance = 0.001;
+  auto Kp = 0.450459, Kd = 2.08389, Ki = 0.00019;
 
-  PID pid1(0.1, 1.6, 0.0, 100);
-  //PID pid2(0.2, 1.8, 0.0, 100);
+  Twiddle twiddle(tolerance, { Kp, Kd, Ki}, { 0.1, 0.1, 0.0001 });
+
+  PID pid(Kp, Ki, Kd);
   
   auto counter = 0;
-  // Initialize the pid variable.
 
-
-  h.onMessage([&pid1, &steps, &counter](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&pid, &twiddle, &counter](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -65,8 +88,16 @@ int main()
           * NOTE: Feel free to play around with the throttle and speed. Maybe use
           * another PID controller to control the speed!
           */
-          pid1.UpdateError(cte);
-          steer_value = pid1.TotalError();
+
+          //optimizeParameters(twiddle, cte);
+          //auto params = twiddle.Params();
+          //pid.Kp = params[0];
+          //pid.Kd = params[1];
+          //pid.Ki = params[2];
+
+
+          pid.UpdateError(cte);
+          steer_value = pid.TotalError();
 
           // Check steering value
           if (steer_value > 1.0) 
@@ -78,13 +109,11 @@ int main()
             steer_value = -1.0;
           }
 
-                    
           // DEBUG
           if (counter > 0 && counter % 10 == 0)
           {
             std::cout << "CTE: " << cte << " Angle: " << angle << " Steering Value: " << steer_value << " Speed: " << speed << std::endl;
           }
-            
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;

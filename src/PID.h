@@ -22,7 +22,7 @@ public:
   /*
   * Constructor
   */
-  PID(double Kp, double Ki, double Kd, int steps);
+  PID(double Kp, double Ki, double Kd);
 
   /*
   * Destructor.
@@ -53,15 +53,7 @@ public:
     return ss.str();
   }
 private:
-  Twiddle twiddle_;
-
-  int updateCounter;
-
-  double bestError;
-
   bool isFirstUpdate;
-
-  int steps;
 };
 
 #endif /* PID_H */
