@@ -60,7 +60,7 @@ int main()
   auto tolerance = 0.001;
 
   // Final PID values
-  auto Kp = 0.26, Kd = 2.2, Ki = 0.00002;
+  auto Kp = 0.2, Kd = 2.0, Ki = 0.00002;
   auto counter = 0;
   auto isOptimize = false;  
 
@@ -115,10 +115,10 @@ int main()
 
 
           // DEBUG
-          if (counter > 0 && counter % 10 == 0)
-          {
-            std::cout << "CTE: " << cte << " Angle: " << angle << " Steering Value: " << steer_value << std::endl;
-          }
+          //if (counter > 0 && counter % 10 == 0)
+          //{
+          //  std::cout << "CTE: " << cte << " Angle: " << angle << " Steering Value: " << steer_value << std::endl;
+          //}
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
