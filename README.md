@@ -7,7 +7,7 @@ Finally, I tried to use the Twiddle algorithm for fine tuning.
 ## Observations
 * Proportional part: Tuning the KP parameter had the most effect on the controller. The proportional part is the main driving part of the controller. It changes its out output value in proportion of the CTE. The vehicle starts oscillating when the KP value is to high or when the car drives at high speed. If the value is too low then the vehicle reacts inadequate, especially in curves.
 * Integral part: The integral part of the PID controller minimizes the error when the error persists over some time. I kept the corresponding KD parameter very small as larger values decreased the controller's performance.
-* Differential part: 
+* Differential part: This part deals with the rate of change of the error. I started with a small value but recognized that larger values reduce overshooting. The vehicle overshooted again if the value was too large and the error small.
 
 ## Video
 I recorded a [video](https://github.com/rudi77/CarND-PID-Control-Project/blob/master/videos/final_settings.mp4) with my final settings.
