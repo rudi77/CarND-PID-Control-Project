@@ -1,10 +1,10 @@
 # CarND-Controls-PID
-The goal of this project is to implement a PID controller. The controller shall be able to keep the vehicle in the udacity's simulator on track at least for one round. The simulator provides the cross track error (CTE) which is the distance from the center of the track, speed and angle of the car. The CTE is fed into the PID controller. The output is the steering value which is sent back to the simulator at every time step t.
-The second task of this project is the tuning of the PID parameters KP, KI and KD.
+The goal of this project is to implement a PID controller and to tune its hyperparameters KP, KI, KD. The controller shall be able to keep the vehicle in the udacity's simulator on track at least for one round. The simulator provides the cross track error (CTE) which is the distance from the center of the track to the car, speed and angle of the car. The CTE is fed into the PID controller. The output is the steering value which is sent back to the simulator at every time step t.
+
 I started to tune the hyperparameters manually as it was described in the lessons. Finally, I tried to use the Twiddle algorithm for fine tuning.
 
 ## Observations
-* Proportional part:
+* Proportional part: Tuning the KP parameter had the most effect on the controller. The proportional part is the main driving part of the controller. It changes its out output value in proportion of the CTE. The vehicle starts oscillating when the KP value is to high or when the car drives at high speed. If the value is too low then the vehicle reacts inadequate, especially in curves.
 * Integral part:
 * Differential part:
 
